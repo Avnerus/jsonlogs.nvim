@@ -276,6 +276,53 @@ function M._find_cell_end_position(line, col_idx)
   return nil
 end
 
+
+-- Prepare preview lines for nvim_buf_set_lines().
+local function prepare_preview_lines(preview_lines, cfg, state)
+  local transform = cfg.display and cfg.display.preview_line_transform
+
+  if type(transform) ~= "function" then
+    local sanitized_lines = {}
+    for _, line in ipairs(preview_lines) do
+      local sanitized = tostring(line):gsub("\n", "\\n"):gsub("\\r", "\\\\r")
+      table.insert(sanitized_lines, sanitized)
+    end
+    return sanitized_lines
+  end
+
+  local transformed_lines = {}
+
+  local function append(value)
+    local s = tostring(value):gsub("\r", "\\r")
+    vim.list_extend(transformed_lines, vim.split(s, "\n", { plain = true }))
+  end
+
+  for i, line in ipairs(preview_lines) do
+    local ok, result = pcall(transform, line, {
+      index = i,
+      state = state,
+      config = cfg,
+    })
+
+    if ok and result ~= nil then
+      if type(result) == "table" then
+        for _, item in ipairs(result) do
+          append(item)
+        end
+      else
+        append(result)
+      end
+    else
+      if not ok then
+        vim.notify("jsonlogs preview_line_transform failed: " .. tostring(result), vim.log.levels.WARN)
+      end
+      append(line)
+    end
+  end
+
+  return transformed_lines
+end
+
 -- Update the preview panel with current line's JSON
 function M.update_preview()
   if not M.state.source_buf or not M.state.preview_buf then

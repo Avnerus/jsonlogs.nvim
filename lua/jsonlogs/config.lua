@@ -37,6 +37,10 @@ M.defaults = {
     table_max_col_width = 30,      -- Max column width in table mode
     table_null_placeholder = "-",  -- Placeholder for missing values in table mode
     table_page_size = 50,          -- Entries per page in table mode (pagination)
+
+    -- Optional hook for transforming preview pane lines before rendering.
+    -- Receives: line, context = { index, state, config }
+    preview_line_transform = nil,
   },
 
   -- Analysis settings
