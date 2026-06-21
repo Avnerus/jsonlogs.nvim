@@ -111,7 +111,7 @@ M.options = vim.deepcopy(M.defaults)
 
 -- Merge user configuration with defaults
 function M.setup(opts)
-  if opts == nil then
+  if opts == nil or vim.tbl_isempty(opts) then
     return M.options
   end
 
