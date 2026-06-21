@@ -7,8 +7,9 @@ local M = {}
 -- Setup function (called by lazy.nvim or user)
 -- @param opts table: User configuration options
 function M.setup(opts)
-  -- Merge user config with defaults
-  config.setup(opts or {})
+  -- Merge user config with defaults.
+  -- If setup is called with no opts after an earlier setup, keep existing config.
+  config.setup(opts)
 
   -- Register commands
   M.register_commands()

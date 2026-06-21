@@ -111,7 +111,11 @@ M.options = vim.deepcopy(M.defaults)
 
 -- Merge user configuration with defaults
 function M.setup(opts)
-  M.options = vim.tbl_deep_extend("force", M.defaults, opts or {})
+  if opts == nil then
+    return M.options
+  end
+
+  M.options = vim.tbl_deep_extend("force", M.defaults, opts)
   return M.options
 end
 
