@@ -478,12 +478,7 @@ function M.update_preview()
   end
 
   -- Sanitize lines to ensure no embedded newlines
-  local sanitized_lines = {}
-  for _, line in ipairs(preview_lines) do
-    -- Replace embedded newlines with a visual placeholder
-    local sanitized = line:gsub("\n", "\\n"):gsub("\r", "\\r")
-    table.insert(sanitized_lines, sanitized)
-  end
+  local sanitized_lines = prepare_preview_lines(preview_lines, cfg, M.state)
 
   -- Update preview buffer
   vim.api.nvim_buf_set_option(M.state.preview_buf, "modifiable", true)
